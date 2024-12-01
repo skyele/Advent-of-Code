@@ -14,13 +14,9 @@ pub fn solve() {
     v1.sort();
     v2.sort();
 
-    let size = v1.len();
     let mut total_distance = 0;
 
-    for i in 0..size {
-        let num1 = v1[i];
-        let num2 = v2[i];
-
+    for (num1, num2) in v1.iter().zip(v2.iter()) {
         total_distance += (num1 - num2).abs();
     }
 
