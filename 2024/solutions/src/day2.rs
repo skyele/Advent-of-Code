@@ -12,16 +12,8 @@ pub fn is_safe_metric1(vec: &Vec<i32>) -> bool {
 }
 
 pub fn is_safe_metric2(vec: &Vec<i32>) -> bool {
-  if vec.len() == 1 {
-    return true;
-  }
-
-  for i in 1..vec.len() {
-    if (vec[i] - vec[i - 1]).abs() > 3 {
-      return false;
-    }
-  }
-  return true;
+  let distance_list = vec.iter().zip(vec.iter().skip(1)).map(|(a, b)| (a - b).abs()).collect::<Vec<i32>>();
+  return distance_list.iter().all(|&x| x <= 3);
 }
 
 pub fn is_safe(vec: &Vec<i32>) -> bool {
