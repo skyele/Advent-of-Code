@@ -37,8 +37,7 @@ pub fn is_same_with_dampener(vec: &Vec<i32>) -> bool {
 
 pub fn parse_input(fname: &str) -> Vec<Vec<i32>> {
   let lines = read_lines(fname).unwrap();
-  let mut vec_2d: Vec<Vec<i32>> = lines.into_iter().map(|line| line.split_whitespace().map(|x| x.parse::<i32>().unwrap()).collect()).collect();
-  return vec_2d;
+  return Vec<Vec<i32>> = lines.into_iter().map(|line| line.split_whitespace().map(|x| x.parse::<i32>().unwrap()).collect()).collect();
 }
 
 pub fn solve_1() {
