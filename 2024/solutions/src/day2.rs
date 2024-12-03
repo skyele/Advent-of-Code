@@ -47,14 +47,14 @@ pub fn is_safe(vec: &Vec<i32>) -> bool {
 }
 
 pub fn is_same_with_dampener(vec: &Vec<i32>) -> bool {
-  if is_safe_metric1(vec) && is_safe_metric2(vec) {
+  if is_safe(vec) {
     return true;
   }
 
   for i in 0..vec.len() {
     let mut new_vec = vec.clone();
     new_vec.remove(i);
-    if is_safe_metric1(&new_vec) && is_safe_metric2(&new_vec) {
+    if is_safe(&new_vec) {
       return true;
     }
   }
