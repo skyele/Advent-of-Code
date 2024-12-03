@@ -2,31 +2,13 @@
 use crate::common::file_helper::read_lines;
 
 pub fn is_safe_metric1(vec: &Vec<i32>) -> bool {
-  if vec.len() == 1 {
-    return true;
-  }
-
-  let mut is_descending = false;
-  let mut is_ascending = false;
-
-  if vec[0] > vec[1] {
-    is_descending = true;
-  } else if vec[0] < vec[1] {
-    is_ascending = true;
-  } else {
+  let equal_list = vec.iter().zip(vec.iter().skip(1)).filter(|(a, b)| a == b).count() as i32;
+  if equal_list > 0 {
     return false;
   }
 
-  for i in 1..vec.len() {
-    if is_descending && vec[i] < vec[i - 1] {
-      continue;
-    } else if is_ascending && vec[i] > vec[i - 1] {
-      continue;
-    } else {
-      return false;
-    }
-  }
-  return true;
+  let greater_list: Vec<_> = vec.iter().zip(vec.iter().skip(1)).map(|(a, b)| a > b).collect();
+  return greater_list.iter().all(|&x| x == greater_list[0]);
 }
 
 pub fn is_safe_metric2(vec: &Vec<i32>) -> bool {
