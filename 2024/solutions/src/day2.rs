@@ -73,20 +73,12 @@ pub fn parse_input(fname: &str) -> Vec<Vec<i32>> {
 
 pub fn solve_1() {
   let vec_2d = parse_input("inputs/day2.txt");
-
-  let mut safe_cnt = 0;
-  for vec in vec_2d {
-    safe_cnt += is_safe(&vec) as i32;
-  }
+  let safe_cnt = vec_2d.iter().filter(|x| is_safe(x)).count() as i32;
   println!("Safe count: {}", safe_cnt);
 }
 
 pub fn solve_2() {
   let vec_2d = parse_input("inputs/day2.txt");
-
-  let mut safe_cnt = 0;
-  for vec in vec_2d {
-    safe_cnt += is_same_with_dampener(&vec) as i32;
-  }
+  let safe_cnt = vec_2d.iter().filter(|x| is_same_with_dampener(x)).count() as i32;
   println!("Safe count with dampener: {}", safe_cnt);
 }
