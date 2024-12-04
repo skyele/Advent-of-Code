@@ -48,10 +48,17 @@ impl<'a> ParserT<'a> {
         };
     }
 
-    pub fn consume_mul(&mut self) -> bool {
-        if self.cursor + 3 > self.size {
+    pub fn check_boundary(&mut self, to_consume: usize) -> bool {
+        if self.cursor + to_consume > self.size {
             self.is_end = true;
             self.reset();
+            return false;
+        }
+        return true;
+    }
+
+    pub fn consume_mul(&mut self) -> bool {
+        if !self.check_boundary(3) {
             return false;
         }
 
@@ -67,9 +74,7 @@ impl<'a> ParserT<'a> {
 
     pub fn consume_enable(&mut self, token: &str, expect_enable: bool) -> bool {
         let size = token.len();
-        if self.cursor + size > self.size {
-            self.is_end = true;
-            self.reset();
+        if !self.check_boundary(size) {
             return false;
         }
 
