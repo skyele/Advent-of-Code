@@ -60,16 +60,15 @@ impl<'a> ParserT<'a> {
     pub fn consume_char(&mut self, c: char, expect_state: StateT) {
         if get_char_at_index(self.input, self.cursor) == c {
             self.state = expect_state;
+            self.cursor += 1;
         } else {
             self.reset();
         }
-        self.cursor += 1;
     }
 
     pub fn consume_num(&mut self, expect_state: StateT) -> i32 {
         if !get_char_at_index(self.input, self.cursor).is_digit(10) {
             self.reset();
-            self.cursor += 1;
             return 0;
         }
 
@@ -128,6 +127,15 @@ pub fn parse_line(line: &str) -> i32 {
 }
 
 pub fn solve_1() {
+    let lines = read_lines("inputs/day3.txt").unwrap();
+    let mut res = 0;
+    for line in &lines {
+        res += parse_line(line);
+    }
+    println!("res={}", res);
+}
+
+pub fn solve_2 () {
     let lines = read_lines("inputs/day3.txt").unwrap();
     let mut res = 0;
     for line in &lines {
