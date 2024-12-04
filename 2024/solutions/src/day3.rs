@@ -1,0 +1,137 @@
+use crate::common::file_helper::read_lines;
+
+#[derive(PartialEq)]
+enum StateT {
+    Init,
+    Mul,
+    Left,
+    Num1,
+    Comma,
+    Num2,
+    Right,
+}
+
+fn get_char_at_index(input: &str, index: usize) -> char {
+    return input.chars().nth(index).unwrap();
+}
+
+struct ParserT<'a> {
+    input: &'a str,
+    size: usize,
+    cursor: usize,
+    is_end: bool,
+    state: StateT,
+    num1: i32,
+    num2: i32,
+}
+
+impl<'a> ParserT<'a> {
+    pub fn new(input: &'a str) -> Self {
+        return ParserT {
+            input: input,
+            size: input.len(),
+            cursor: 0,
+            is_end: false,
+            state: StateT::Init,
+            num1: 0,
+            num2: 0,
+        };
+    }
+
+    pub fn consume_to_mul(&mut self) {
+        loop {
+            if self.cursor + 3 > self.size {
+                self.is_end = true;
+                self.reset();
+                return;
+            }
+
+            let substr = &self.input[self.cursor..self.cursor + 3];
+            if substr == "mul" {
+                self.state = StateT::Mul;
+                self.cursor += 3;
+                return;
+            } else {
+                self.cursor += 1;
+            }
+        }
+    }
+
+    pub fn consume_char(&mut self, c: char, expect_state: StateT) {
+        if get_char_at_index(self.input, self.cursor) == c {
+            self.state = expect_state;
+        } else {
+            self.reset();
+        }
+        self.cursor += 1;
+    }
+
+    pub fn consume_num(&mut self, expect_state: StateT) -> i32 {
+        if !get_char_at_index(self.input, self.cursor).is_digit(10) {
+            self.reset();
+            self.cursor += 1;
+            return 0;
+        }
+
+        let mut num_str = String::new();
+        while self.cursor < self.size {
+            if !get_char_at_index(self.input, self.cursor).is_digit(10) {
+                break;
+            }
+            num_str.push(get_char_at_index(self.input, self.cursor));
+            self.cursor += 1;
+        }
+        self.state = expect_state;
+        return num_str.parse::<i32>().unwrap();
+    }
+
+    pub fn reset(&mut self) {
+        self.state = StateT::Init;
+        self.num1 = 0;
+        self.num2 = 0;
+    }
+
+    pub fn consume(&mut self) {
+        if self.cursor >= self.size {
+            self.is_end = true;
+            self.reset();
+            return;
+        }
+
+        if self.state == StateT::Init {
+            self.consume_to_mul();
+        } else if self.state == StateT::Mul {
+            self.consume_char('(', StateT::Left);
+        } else if self.state == StateT::Left {
+            self.num1 = self.consume_num(StateT::Num1);
+        } else if self.state == StateT::Num1 {
+            self.consume_char(',', StateT::Comma);
+        } else if self.state == StateT::Comma {
+            self.num2 = self.consume_num(StateT::Num2);
+        } else if self.state == StateT::Num2 {
+            self.consume_char(')', StateT::Right);
+        }
+    }
+}
+
+pub fn parse_line(line: &str) -> i32 {
+    let mut parser = ParserT::new(line);
+    let mut res = 0;
+    while !parser.is_end {
+        parser.consume();
+        if parser.state == StateT::Right {
+            res += parser.num1 * parser.num2;
+            parser.reset();
+        }
+    }
+    return res;
+}
+
+pub fn solve_1() {
+    let lines = read_lines("inputs/day3.txt").unwrap();
+    let mut res = 0;
+    for line in &lines {
+        res += parse_line(line);
+    }
+    println!("res={}", res);
+}
