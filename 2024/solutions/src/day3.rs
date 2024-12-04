@@ -129,9 +129,10 @@ impl<'a> ParserT<'a> {
                     self.cursor += 1;
                 }
             } else {
-                if self.consume_mul() {
-                } else if self.consume_enable("do()", true) {
-                } else if self.consume_enable("don't()", false) {
+                if self.consume_mul()
+                    || self.consume_enable("do()", true)
+                    || self.consume_enable("don't()", false)
+                {
                 } else {
                     self.cursor += 1;
                 }
