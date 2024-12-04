@@ -1,6 +1,12 @@
 use crate::common::file_helper::read_lines;
 
 #[derive(PartialEq)]
+enum ModeT {
+    Solve1,
+    Solve2,
+}
+
+#[derive(PartialEq)]
 enum StateT {
     Init,
     Mul,
@@ -23,10 +29,12 @@ struct ParserT<'a> {
     state: StateT,
     num1: i32,
     num2: i32,
+    mode: ModeT,
+    enable: bool,
 }
 
 impl<'a> ParserT<'a> {
-    pub fn new(input: &'a str) -> Self {
+    pub fn new(input: &'a str, mode: ModeT) -> Self {
         return ParserT {
             input: input,
             size: input.len(),
@@ -35,6 +43,8 @@ impl<'a> ParserT<'a> {
             state: StateT::Init,
             num1: 0,
             num2: 0,
+            mode: mode,
+            enable: true,
         };
     }
 
@@ -51,7 +61,44 @@ impl<'a> ParserT<'a> {
             self.cursor += 3;
             return true;
         } else {
-            // self.cursor += 1;
+            return false;
+        }
+    }
+
+    pub fn consume_do(&mut self) -> bool {
+        let token = "do()";
+        let size = token.len();
+        if self.cursor + size > self.size {
+            self.is_end = true;
+            self.reset();
+            return false;
+        }
+
+        let substr = &self.input[self.cursor..self.cursor + size];
+        if substr == token {
+            self.enable = true;
+            self.cursor += size;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    pub fn consume_dont(&mut self) -> bool {
+        let token = "don't()";
+        let size = token.len();
+        if self.cursor + size > self.size {
+            self.is_end = true;
+            self.reset();
+            return false;
+        }
+
+        let substr = &self.input[self.cursor..self.cursor + size];
+        if substr == token {
+            self.enable = false;
+            self.cursor += size;
+            return true;
+        } else {
             return false;
         }
     }
@@ -97,9 +144,19 @@ impl<'a> ParserT<'a> {
         }
 
         if self.state == StateT::Init {
-            if !self.consume_mul() {
-                self.cursor += 1;
+            if self.mode == ModeT::Solve1 {
+                if !self.consume_mul() {
+                    self.cursor += 1;
+                }
+            } else {
+                if self.consume_mul() {
+                } else if self.consume_do() {
+                } else if self.consume_dont() {
+                } else {
+                    self.cursor += 1;
+                }
             }
+            return;
         } else if self.state == StateT::Mul {
             self.consume_char('(', StateT::Left);
         } else if self.state == StateT::Left {
@@ -112,15 +169,22 @@ impl<'a> ParserT<'a> {
             self.consume_char(')', StateT::Right);
         }
     }
+
+    pub fn set_input(&mut self, input: &'a str) {
+        self.input = input;
+        self.size = input.len();
+        self.cursor = 0;
+        self.is_end = false;
+        self.reset();
+    }
 }
 
-pub fn parse_line(line: &str) -> i32 {
-    let mut parser = ParserT::new(line);
+pub fn parse_line(parser: &mut ParserT) -> i32 {
     let mut res = 0;
     while !parser.is_end {
         parser.consume();
         if parser.state == StateT::Right {
-            res += parser.num1 * parser.num2;
+            res += parser.num1 * parser.num2 * (parser.enable as i32);
             parser.reset();
         }
     }
@@ -130,8 +194,10 @@ pub fn parse_line(line: &str) -> i32 {
 pub fn solve_1() {
     let lines = read_lines("inputs/day3.txt").unwrap();
     let mut res = 0;
+    let mut parser = ParserT::new("", ModeT::Solve1);
     for line in &lines {
-        res += parse_line(line);
+        parser.set_input(line);
+        res += parse_line(&mut parser);
     }
     println!("res={}", res);
 }
@@ -139,8 +205,10 @@ pub fn solve_1() {
 pub fn solve_2() {
     let lines = read_lines("inputs/day3.txt").unwrap();
     let mut res = 0;
+    let mut parser = ParserT::new("", ModeT::Solve2);
     for line in &lines {
-        res += parse_line(line);
+        parser.set_input(line);
+        res += parse_line(&mut parser);
     }
     println!("res={}", res);
 }
