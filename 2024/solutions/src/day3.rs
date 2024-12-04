@@ -65,8 +65,7 @@ impl<'a> ParserT<'a> {
         }
     }
 
-    pub fn consume_do(&mut self) -> bool {
-        let token = "do()";
+    pub fn consume_enable(&mut self, token: &str, expect_enable: bool) -> bool {
         let size = token.len();
         if self.cursor + size > self.size {
             self.is_end = true;
@@ -76,26 +75,7 @@ impl<'a> ParserT<'a> {
 
         let substr = &self.input[self.cursor..self.cursor + size];
         if substr == token {
-            self.enable = true;
-            self.cursor += size;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    pub fn consume_dont(&mut self) -> bool {
-        let token = "don't()";
-        let size = token.len();
-        if self.cursor + size > self.size {
-            self.is_end = true;
-            self.reset();
-            return false;
-        }
-
-        let substr = &self.input[self.cursor..self.cursor + size];
-        if substr == token {
-            self.enable = false;
+            self.enable = expect_enable;
             self.cursor += size;
             return true;
         } else {
@@ -150,8 +130,8 @@ impl<'a> ParserT<'a> {
                 }
             } else {
                 if self.consume_mul() {
-                } else if self.consume_do() {
-                } else if self.consume_dont() {
+                } else if self.consume_enable("do()", true) {
+                } else if self.consume_enable("don't()", false) {
                 } else {
                     self.cursor += 1;
                 }
