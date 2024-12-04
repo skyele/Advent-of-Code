@@ -38,22 +38,21 @@ impl<'a> ParserT<'a> {
         };
     }
 
-    pub fn consume_to_mul(&mut self) {
-        loop {
-            if self.cursor + 3 > self.size {
-                self.is_end = true;
-                self.reset();
-                return;
-            }
+    pub fn consume_to_mul(&mut self) -> bool {
+        if self.cursor + 3 > self.size {
+            self.is_end = true;
+            self.reset();
+            return false;
+        }
 
-            let substr = &self.input[self.cursor..self.cursor + 3];
-            if substr == "mul" {
-                self.state = StateT::Mul;
-                self.cursor += 3;
-                return;
-            } else {
-                self.cursor += 1;
-            }
+        let substr = &self.input[self.cursor..self.cursor + 3];
+        if substr == "mul" {
+            self.state = StateT::Mul;
+            self.cursor += 3;
+            return true;
+        } else {
+            // self.cursor += 1;
+            return false;
         }
     }
 
@@ -98,7 +97,9 @@ impl<'a> ParserT<'a> {
         }
 
         if self.state == StateT::Init {
-            self.consume_to_mul();
+            if !self.consume_to_mul() {
+                self.cursor += 1;
+            }
         } else if self.state == StateT::Mul {
             self.consume_char('(', StateT::Left);
         } else if self.state == StateT::Left {
@@ -135,7 +136,7 @@ pub fn solve_1() {
     println!("res={}", res);
 }
 
-pub fn solve_2 () {
+pub fn solve_2() {
     let lines = read_lines("inputs/day3.txt").unwrap();
     let mut res = 0;
     for line in &lines {
