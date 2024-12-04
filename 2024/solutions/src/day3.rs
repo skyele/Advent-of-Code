@@ -38,7 +38,7 @@ impl<'a> ParserT<'a> {
         };
     }
 
-    pub fn consume_to_mul(&mut self) -> bool {
+    pub fn consume_mul(&mut self) -> bool {
         if self.cursor + 3 > self.size {
             self.is_end = true;
             self.reset();
@@ -97,7 +97,7 @@ impl<'a> ParserT<'a> {
         }
 
         if self.state == StateT::Init {
-            if !self.consume_to_mul() {
+            if !self.consume_mul() {
                 self.cursor += 1;
             }
         } else if self.state == StateT::Mul {
