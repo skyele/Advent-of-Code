@@ -59,22 +59,19 @@ pub fn check_updates(nums: &Vec<i32>, reverse_rules: &HashMap<i32, HashSet<i32>>
 }
 
 pub fn correctify_updates(nums: &mut Vec<i32>, reverse_rules: &HashMap<i32, HashSet<i32>>) {
-    loop {
-        let mut change_flag = false;
-        for i in 0..nums.len() {
-            if let Some(set) = reverse_rules.get(&nums[i]) {
-                for j in i + 1..nums.len() {
-                    if set.contains(&nums[j]) {
-                        nums.swap(i, j);
-                        change_flag = true;
-                        break;
-                    }
-                }
+    let size = nums.len();
+    for i in 0..size {
+        let mut degree = 0;
+        for j in 0..size {
+            if i == j {
+                continue;
             }
+            degree += reverse_rules.get(&nums[j]).unwrap().contains(&nums[i]) as i32 * 2 - 1;
         }
 
-        if change_flag == false {
-            break;
+        if degree == 0 {
+            nums.swap(i, size / 2);
+            return;
         }
     }
 }
