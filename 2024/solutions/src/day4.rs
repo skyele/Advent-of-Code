@@ -1,5 +1,14 @@
 use crate::common::file_helper::read_lines;
 
+pub fn check(grids: &Vec<String>, x: i32, y: i32, expect: char) -> bool {
+    let xsize = grids.len();
+    let ysize = grids[0].len();
+    if x < 0 || x >= xsize as i32 || y < 0 || y >= ysize as i32 {
+        return false;
+    }
+    return grids[x as usize].chars().nth(y as usize).unwrap() == expect;
+}
+
 pub fn search_1<'a>(
     grids: &Vec<String>,
     x: i32,
@@ -15,15 +24,6 @@ pub fn search_1<'a>(
 
     return check(grids, x, y, *next_ele.unwrap())
         && search_1(grids, x + dx, y + dy, dx, dy, expect);
-}
-
-pub fn check(grids: &Vec<String>, x: i32, y: i32, expect: char) -> bool {
-    let xsize = grids.len();
-    let ysize = grids[0].len();
-    if x < 0 || x >= xsize as i32 || y < 0 || y >= ysize as i32 {
-        return false;
-    }
-    return grids[x as usize].chars().nth(y as usize).unwrap() == expect;
 }
 
 pub fn search_2(grids: &Vec<String>, x: i32, y: i32) -> bool {
