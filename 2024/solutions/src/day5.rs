@@ -19,28 +19,22 @@ pub fn get_mid_ele(nums: &Vec<i32>) -> i32 {
 }
 
 pub fn find_blank_line_idx(lines: &Vec<String>) -> usize {
-    for (idx, line) in lines.iter().enumerate() {
-        if line.is_empty() {
-            return idx;
-        }
-    }
-    return lines.len();
+    lines
+        .iter()
+        .position(|x| x.is_empty())
+        .unwrap_or(lines.len())
 }
 
 pub fn parse_rule(line: &str) -> (i32, i32) {
-    let parts: Vec<&str> = line.split("|").collect();
-    return (
-        parts[0].parse::<i32>().unwrap(),
-        parts[1].parse::<i32>().unwrap(),
-    );
+    let parts: Vec<i32> = line.split("|").map(|x| x.parse::<i32>().unwrap()).collect();
+    return (parts[0], parts[1]);
 }
 
 pub fn parse_rules(
     lines: &Vec<String>,
-    idx: usize,
+    blank_line_idx: usize,
     is_reverse: bool,
 ) -> HashMap<i32, HashSet<i32>> {
-    let blank_line_idx = find_blank_line_idx(lines);
     let mut rules: HashMap<i32, HashSet<i32>> = HashMap::new();
     for line in lines.iter().take(blank_line_idx) {
         let (num1, num2) = parse_rule(line);
