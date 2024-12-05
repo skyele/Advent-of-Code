@@ -37,12 +37,9 @@ pub fn parse_rules(
 ) -> HashMap<i32, HashSet<i32>> {
     let mut rules: HashMap<i32, HashSet<i32>> = HashMap::new();
     for line in lines.iter().take(blank_line_idx) {
-        let (num1, num2) = parse_rule(line);
-        if is_reverse {
-            rules.entry(num2).or_insert(HashSet::new()).insert(num1);
-        } else {
-            rules.entry(num1).or_insert(HashSet::new()).insert(num2);
-        }
+        let (k, v) = parse_rule(line);
+        let (k, v) = if is_reverse { (v, k) } else { (k, v) };
+        rules.entry(k).or_insert(HashSet::new()).insert(v);
     }
     return rules;
 }
