@@ -1,6 +1,6 @@
 use crate::common::file_helper::read_lines;
 
-pub fn search<'a>(
+pub fn search_1<'a>(
     grids: &Vec<String>,
     x: i32,
     y: i32,
@@ -13,7 +13,7 @@ pub fn search<'a>(
         return true;
     }
 
-    return check(grids, x, y, *next_ele.unwrap()) && search(grids, x + dx, y + dy, dx, dy, expect);
+    return check(grids, x, y, *next_ele.unwrap()) && search_1(grids, x + dx, y + dy, dx, dy, expect);
 }
 
 pub fn check(grids: &Vec<String>, x: i32, y: i32, expect: char) -> bool {
@@ -25,7 +25,7 @@ pub fn check(grids: &Vec<String>, x: i32, y: i32, expect: char) -> bool {
     return grids[x as usize].chars().nth(y as usize).unwrap() == expect;
 }
 
-pub fn search_1<'a>(grids: &Vec<String>, x: i32, y: i32) -> bool {
+pub fn search_2<'a>(grids: &Vec<String>, x: i32, y: i32) -> bool {
     if !check(grids, x, y, 'A') {
         return false;
     }
@@ -57,7 +57,7 @@ pub fn solve_1() {
     for x in 0..xsize {
         for y in 0..ysize {
             for (dx, dy) in &dxys {
-                cnt += search(&lines, x as i32, y as i32, dx, dy, expects.iter()) as i32;
+                cnt += search_1(&lines, x as i32, y as i32, dx, dy, expects.iter()) as i32;
             }
         }
     }
@@ -72,7 +72,7 @@ pub fn solve_2() {
     let mut cnt = 0;
     for x in 0..xsize {
         for y in 0..ysize {
-            cnt += search_1(&lines, x as i32, y as i32) as i32;
+            cnt += search_2(&lines, x as i32, y as i32) as i32;
         }
     }
     println!("res={}", cnt);
