@@ -18,12 +18,10 @@ pub fn search_1<'a>(
     mut expect: impl Iterator<Item = &'a char>,
 ) -> bool {
     let next_ele = expect.next();
-    if next_ele.is_none() {
-        return true;
-    }
 
-    return check(grids, x, y, *next_ele.unwrap())
-        && search_1(grids, x + dx, y + dy, dx, dy, expect);
+    return next_ele.is_none()
+        || check(grids, x, y, *next_ele.unwrap())
+            && search_1(grids, x + dx, y + dy, dx, dy, expect);
 }
 
 pub fn search_2(grids: &Vec<String>, x: i32, y: i32) -> bool {
