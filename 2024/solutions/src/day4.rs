@@ -26,7 +26,7 @@ pub fn check(grids: &Vec<String>, x: i32, y: i32, expect: char) -> bool {
     return grids[x as usize].chars().nth(y as usize).unwrap() == expect;
 }
 
-pub fn search_2<'a>(grids: &Vec<String>, x: i32, y: i32) -> bool {
+pub fn search_2(grids: &Vec<String>, x: i32, y: i32) -> bool {
     if !check(grids, x, y, 'A') {
         return false;
     }
