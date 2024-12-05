@@ -91,10 +91,8 @@ pub fn process_updates(
 
     (check_updates(&nums, reverse_rules) == expect)
         .then(|| {
-            expect.then(|| get_mid_ele(&nums)).unwrap_or_else(|| {
-                correctify_updates(&mut nums, reverse_rules);
-                get_mid_ele(&nums)
-            })
+            (expect == false).then(|| correctify_updates(&mut nums, reverse_rules));
+            get_mid_ele(&nums)
         })
         .unwrap_or(0)
 }
