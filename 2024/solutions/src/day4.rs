@@ -13,7 +13,8 @@ pub fn search_1<'a>(
         return true;
     }
 
-    return check(grids, x, y, *next_ele.unwrap()) && search_1(grids, x + dx, y + dy, dx, dy, expect);
+    return check(grids, x, y, *next_ele.unwrap())
+        && search_1(grids, x + dx, y + dy, dx, dy, expect);
 }
 
 pub fn check(grids: &Vec<String>, x: i32, y: i32, expect: char) -> bool {
