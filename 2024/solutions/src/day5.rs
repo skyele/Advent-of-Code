@@ -89,18 +89,14 @@ pub fn process_updates(
 ) -> i32 {
     let mut nums: Vec<i32> = line.split(",").map(|x| x.parse::<i32>().unwrap()).collect();
 
-    if expect {
-        check_updates(&nums, reverse_rules)
-            .then(|| get_mid_ele(&nums))
-            .unwrap_or(0)
-    } else {
-        (check_updates(&nums, reverse_rules) == false)
-            .then(|| {
+    (check_updates(&nums, reverse_rules) == expect)
+        .then(|| {
+            expect.then(|| get_mid_ele(&nums)).unwrap_or_else(|| {
                 correctify_updates(&mut nums, reverse_rules);
                 get_mid_ele(&nums)
             })
-            .unwrap_or(0)
-    }
+        })
+        .unwrap_or(0)
 }
 
 pub fn solve_1() -> i32 {
