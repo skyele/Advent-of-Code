@@ -20,12 +20,8 @@ pub fn search<'a>(
         return false;
     }
 
-    if grids[x as usize].chars().nth(y as usize).unwrap() == *next_ele.unwrap()
-        && search(grids, x + dx, y + dy, dx, dy, expect)
-    {
-        return true;
-    }
-    return false;
+    return grids[x as usize].chars().nth(y as usize).unwrap() == *next_ele.unwrap()
+        && search(grids, x + dx, y + dy, dx, dy, expect);
 }
 
 pub fn solve_1() {
