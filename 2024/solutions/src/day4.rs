@@ -26,9 +26,6 @@ pub fn check(grids: &Vec<String>, x: i32, y: i32, expect: char) -> bool {
 }
 
 pub fn search_1<'a>(grids: &Vec<String>, x: i32, y: i32) -> bool {
-    let xsize = grids.len();
-    let ysize = grids[0].len();
-
     if !check(grids, x, y, 'A') {
         return false;
     }
