@@ -20,10 +20,10 @@ pub fn search<'a>(
         return false;
     }
 
-    if grids[x as usize].chars().nth(y as usize).unwrap() == *next_ele.unwrap() {
-        if search(grids, x + dx, y + dy, dx, dy, expect) {
-            return true;
-        }
+    if grids[x as usize].chars().nth(y as usize).unwrap() == *next_ele.unwrap()
+        && search(grids, x + dx, y + dy, dx, dy, expect)
+    {
+        return true;
     }
     return false;
 }
