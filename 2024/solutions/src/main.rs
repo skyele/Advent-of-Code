@@ -5,26 +5,6 @@ mod day2;
 mod day3;
 mod day4;
 
-fn check_day1_1() {
-    let expected_value = 1319616;
-    let day1_1_res = day1_1::solve();
-    assert_eq!(
-        day1_1_res, expected_value,
-        "Test failed with value: {:?} != {}",
-        day1_1_res, expected_value
-    );
-}
-
-fn check_day1_2() {
-    let expected_value = 27267728;
-    let day1_2_res = day1_2::solve();
-    assert_eq!(
-        day1_2_res, expected_value,
-        "Test failed with value: {:?} != {}",
-        day1_2_res, expected_value
-    );
-}
-
 fn check(res: i32, expected: i32) {
     assert_eq!(
         res, expected,
