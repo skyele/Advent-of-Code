@@ -112,7 +112,7 @@ pub fn solve_1() -> i32 {
     for line in lines.iter().skip(blank_line_idx + 1) {
         res += process_updates(line, &reverse_rules, true);
     }
-    println!("res: {}", res);
+    println!("res={}", res);
     return res;
 }
 
@@ -125,6 +125,6 @@ pub fn solve_2() -> i32 {
     for line in lines.iter().skip(blank_line_idx + 1) {
         res += process_updates(line, &reverse_rules, false);
     }
-    println!("res: {}", res);
+    println!("res={}", res);
     return res;
 }
