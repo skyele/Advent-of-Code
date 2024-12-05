@@ -4,6 +4,7 @@ mod day1_2;
 mod day2;
 mod day3;
 mod day4;
+mod day5;
 
 fn check(res: i32, expected: i32) {
     assert_eq!(
@@ -22,4 +23,6 @@ fn main() {
     check(day3::solve_2(), 106921067);
     check(day4::solve_1(), 2401);
     check(day4::solve_2(), 1822);
+    check(day5::solve_1(), 6949);
+    check(day5::solve_2(), 4145);
 }
