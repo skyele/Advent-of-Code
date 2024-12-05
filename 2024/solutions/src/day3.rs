@@ -177,7 +177,7 @@ pub fn parse_line(parser: &mut ParserT) -> i32 {
     return res;
 }
 
-pub fn solve_1() {
+pub fn solve_1() -> i32 {
     let lines = read_lines("inputs/day3.txt").unwrap();
     let mut res = 0;
     let mut parser = ParserT::new("", ModeT::Solve1);
@@ -186,9 +186,10 @@ pub fn solve_1() {
         res += parse_line(&mut parser);
     }
     println!("res={}", res);
+    return res;
 }
 
-pub fn solve_2() {
+pub fn solve_2() -> i32 {
     let lines = read_lines("inputs/day3.txt").unwrap();
     let mut res = 0;
     let mut parser = ParserT::new("", ModeT::Solve2);
@@ -197,4 +198,5 @@ pub fn solve_2() {
         res += parse_line(&mut parser);
     }
     println!("res={}", res);
+    return res;
 }

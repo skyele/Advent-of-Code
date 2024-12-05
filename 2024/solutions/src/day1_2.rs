@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::common::file_helper::read_lines;
 
-pub fn solve() {
+pub fn solve() -> i32 {
     let lines = read_lines("inputs/day1.txt").unwrap();
     let mut v1: Vec<i32> = Vec::new();
     let mut map: HashMap<i32, i32> = HashMap::new();
@@ -21,4 +21,5 @@ pub fn solve() {
     }
 
     println!("scores: {}", scores);
+    return scores;
 }

@@ -37,7 +37,7 @@ pub fn search_2(grids: &Vec<String>, x: i32, y: i32) -> bool {
     return diagonal && anti_diagonal;
 }
 
-pub fn solve_1() {
+pub fn solve_1() -> i32 {
     let lines = read_lines("inputs/day4.txt").unwrap();
     let xsize: usize = lines.len();
     let ysize: usize = lines[0].len();
@@ -61,9 +61,10 @@ pub fn solve_1() {
         }
     }
     println!("res={}", cnt);
+    return cnt;
 }
 
-pub fn solve_2() {
+pub fn solve_2() -> i32 {
     let lines = read_lines("inputs/day4.txt").unwrap();
     let xsize: usize = lines.len();
     let ysize: usize = lines[0].len();
@@ -75,4 +76,5 @@ pub fn solve_2() {
         }
     }
     println!("res={}", cnt);
+    return cnt;
 }
