@@ -108,10 +108,9 @@ pub fn solve_1() -> i32 {
     let blank_line_idx = find_blank_line_idx(&lines);
     let reverse_rules = parse_rules(&lines, blank_line_idx, true);
 
-    let mut res = 0;
-    for line in lines.iter().skip(blank_line_idx + 1) {
-        res += process_updates(line, &reverse_rules, true);
-    }
+    let res = lines.iter().skip(blank_line_idx + 1).fold(0, |acc, line| {
+        acc + process_updates(line, &reverse_rules, true)
+    });
     println!("res={}", res);
     return res;
 }
@@ -121,10 +120,9 @@ pub fn solve_2() -> i32 {
     let blank_line_idx = find_blank_line_idx(&lines);
     let reverse_rules = parse_rules(&lines, blank_line_idx, true);
 
-    let mut res = 0;
-    for line in lines.iter().skip(blank_line_idx + 1) {
-        res += process_updates(line, &reverse_rules, false);
-    }
+    let res = lines.iter().skip(blank_line_idx + 1).fold(0, |acc, line| {
+        acc + process_updates(line, &reverse_rules, false)
+    });
     println!("res={}", res);
     return res;
 }
