@@ -8,9 +8,6 @@ pub fn search<'a>(
     dy: &i32,
     mut expect: impl Iterator<Item = &'a char>,
 ) -> bool {
-    let xsize = grids.len();
-    let ysize = grids[0].len();
-
     let next_ele = expect.next();
     if next_ele.is_none() {
         return true;
