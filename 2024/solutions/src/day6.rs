@@ -113,19 +113,26 @@ impl State {
     }
 
     fn move_next(&mut self, lines: &Vec<Vec<char>>, extra_x: i32, extra_y: i32) {
-        self.move_forward();
         if !self.is_guarded(lines, extra_x, extra_y) {
-            return;
+            self.move_forward();
+        } else {
+            self.move_backward();
+            self.turn_right();
         }
 
-        self.move_backward();
-        self.turn_right();
-        self.move_forward();
+        // self.move_forward();
+        // if !self.is_guarded(lines, extra_x, extra_y) {
+        //     return;
+        // }
 
-        if !self.is_guarded(lines, extra_x, extra_y) {
-            return;
-        }
-        self.move_backward();
+        // self.move_backward();
+        // self.turn_right();
+        // self.move_forward();
+
+        // if !self.is_guarded(lines, extra_x, extra_y) {
+        //     return;
+        // }
+        // self.move_backward();
     }
 
     fn is_valid(&self, lines: &Vec<Vec<char>>) -> bool {
@@ -157,7 +164,7 @@ pub fn process_grid_1(grid: &Vec<Vec<char>>) -> usize {
     let mut places = HashSet::<(i32, i32)>::new();
     let curr_state = &mut start_state;
     while curr_state.is_valid(&grid) {
-        if(!curr_state.is_guarded(&grid, -1, -1)) {
+        if (!curr_state.is_guarded(&grid, -1, -1)) {
             places.insert(curr_state.get_position());
         }
         curr_state.move_next(grid, -1, -1);
