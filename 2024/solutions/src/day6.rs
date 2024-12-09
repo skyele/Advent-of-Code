@@ -119,20 +119,6 @@ impl State {
             self.move_backward();
             self.turn_right();
         }
-
-        // self.move_forward();
-        // if !self.is_guarded(lines, extra_x, extra_y) {
-        //     return;
-        // }
-
-        // self.move_backward();
-        // self.turn_right();
-        // self.move_forward();
-
-        // if !self.is_guarded(lines, extra_x, extra_y) {
-        //     return;
-        // }
-        // self.move_backward();
     }
 
     fn is_valid(&self, lines: &Vec<Vec<char>>) -> bool {
