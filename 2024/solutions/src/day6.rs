@@ -3,7 +3,7 @@ use std::fmt;
 
 use crate::common::file_helper::read_lines;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Eq, Hash, PartialEq)]
 enum Direction {
     Up,
     Down,
@@ -11,6 +11,7 @@ enum Direction {
     Right,
 }
 
+#[derive(Clone, Eq, Hash, PartialEq)]
 struct State {
     x: i32,
     y: i32,
@@ -110,15 +111,20 @@ impl State {
         }
     }
 
-    fn move_next(&mut self, lines: &Vec<String>) {
+    fn move_next(&mut self, lines: &Vec<String>, extra_x: i32, extra_y: i32) {
         self.move_forward();
-        if !self.is_guarded(lines) {
+        if !self.is_guarded(lines) && !(self.x == extra_x && self.y == extra_y) {
             return;
         }
 
         self.move_backward();
         self.turn_right();
         self.move_forward();
+
+        if !self.is_guarded(lines) && !(self.x == extra_x && self.y == extra_y) {
+            return;
+        }
+        self.move_backward();
     }
 
     fn is_valid(&self, lines: &Vec<String>) -> bool {
@@ -142,20 +148,68 @@ pub fn find_start_place(lines: &Vec<String>) -> State {
     panic!("No start place found");
 }
 
-pub fn process_grid(lines: &Vec<String>) -> usize {
+pub fn process_grid_1(lines: &Vec<String>) -> usize {
     let mut start_state: State = find_start_place(&lines);
     let mut places = HashSet::<(i32, i32)>::new();
     let curr_state = &mut start_state;
     while curr_state.is_valid(&lines) {
         places.insert(curr_state.get_position());
-        curr_state.move_next(lines);
+        curr_state.move_next(lines, -1, -1);
     }
     return places.len();
 }
 
+pub fn process_grid_with_new_obstacle(
+    start_state: &State,
+    lines: &Vec<String>,
+    x: i32,
+    y: i32,
+) -> bool {
+    let mut states = HashSet::<State>::new();
+    let mut curr_state = start_state.clone();
+    let xsize = lines.len() as i32;
+    let ysize = lines[0].len() as i32;
+
+    while curr_state.is_valid(&lines) {
+        if states.contains(&curr_state) {
+            return true;
+        }
+        states.insert(curr_state.clone());
+        curr_state.move_next(lines, x, y);
+    }
+    return false;
+}
+
+pub fn process_grid_2(lines: &Vec<String>) -> i32 {
+    let mut start_state: State = find_start_place(&lines);
+    let xsize = lines.len() as i32;
+    let ysize = lines[0].len() as i32;
+    let mut res: i32 = 0;
+
+    for i in 0..xsize {
+        for j in 0..ysize {
+            if i == start_state.x && j == start_state.y {
+                continue;
+            }
+
+            let is_loop = process_grid_with_new_obstacle(&start_state, &lines, i, j);
+            res += is_loop as i32;
+        }
+    }
+
+    return res;
+}
+
 pub fn solve_1() -> i32 {
     let lines = read_lines("inputs/day6.txt").unwrap();
-    let res = process_grid(&lines);
+    let res = process_grid_1(&lines);
+    println!("res={}", res);
+    return res as i32;
+}
+
+pub fn solve_2() -> i32 {
+    let lines = read_lines("inputs/day6.txt").unwrap();
+    let res = process_grid_2(&lines);
     println!("res={}", res);
     return res as i32;
 }
