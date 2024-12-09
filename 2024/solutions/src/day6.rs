@@ -18,7 +18,7 @@ struct State {
     direction: Direction,
 }
 
-pub fn is_valid(x: i32, y: i32, lines: &Vec<Vec<char>>) -> bool {
+pub fn is_valid(x: i32, y: i32, lines: &Vec<Vec<i32>>) -> bool {
     return x >= 0 && x < lines.len() as i32 && y >= 0 && y < lines[0].len() as i32;
 }
 
@@ -87,11 +87,11 @@ impl State {
         }
     }
 
-    fn is_guarded(&self, lines: &Vec<Vec<char>>, extra_x: i32, extra_y: i32) -> bool {
+    fn is_guarded(&self, lines: &Vec<Vec<i32>>, extra_x: i32, extra_y: i32) -> bool {
         if !is_valid(self.x, self.y, lines) {
             return false;
         }
-        return lines[self.x as usize][self.y as usize] == '#'
+        return lines[self.x as usize][self.y as usize] == 16
             || (self.x == extra_x && self.y == extra_y);
     }
 
@@ -112,7 +112,7 @@ impl State {
         }
     }
 
-    fn move_next(&mut self, lines: &Vec<Vec<char>>, extra_x: i32, extra_y: i32) {
+    fn move_next(&mut self, lines: &Vec<Vec<i32>>, extra_x: i32, extra_y: i32) {
         if !self.is_guarded(lines, extra_x, extra_y) {
             self.move_forward();
         } else {
@@ -121,22 +121,22 @@ impl State {
         }
     }
 
-    fn is_valid(&self, lines: &Vec<Vec<char>>) -> bool {
+    fn is_valid(&self, lines: &Vec<Vec<i32>>) -> bool {
         return is_valid(self.x, self.y, lines);
     }
 }
 
-pub fn find_start_place(lines: &Vec<Vec<char>>) -> State {
+pub fn find_start_place(lines: &Vec<Vec<i32>>) -> State {
     let xsize = lines.len();
     let ysize = lines[0].len();
 
     for i in 0..xsize {
         for j in 0..ysize {
-            if lines[i][j] != '.' && lines[i][j] != '#' {
+            if lines[i][j] == 1 {
                 return State {
                     x: i as i32,
                     y: j as i32,
-                    direction: Direction::from_char(lines[i][j]),
+                    direction: Direction::Up,
                 };
             }
         }
@@ -145,7 +145,7 @@ pub fn find_start_place(lines: &Vec<Vec<char>>) -> State {
     panic!("No start place found");
 }
 
-pub fn process_grid_1(grid: &Vec<Vec<char>>) -> usize {
+pub fn process_grid_1(grid: &Vec<Vec<i32>>) -> usize {
     let mut start_state: State = find_start_place(&grid);
     let mut places = HashSet::<(i32, i32)>::new();
     let curr_state = &mut start_state;
@@ -160,7 +160,7 @@ pub fn process_grid_1(grid: &Vec<Vec<char>>) -> usize {
 
 pub fn process_grid_with_new_obstacle(
     start_state: &State,
-    lines: &Vec<Vec<char>>,
+    lines: &Vec<Vec<i32>>,
     x: i32,
     y: i32,
 ) -> bool {
@@ -179,7 +179,7 @@ pub fn process_grid_with_new_obstacle(
     return false;
 }
 
-pub fn process_grid_2(lines: &Vec<Vec<char>>) -> i32 {
+pub fn process_grid_2(lines: &Vec<Vec<i32>>) -> i32 {
     let mut start_state: State = find_start_place(&lines);
     let xsize = lines.len() as i32;
     let ysize = lines[0].len() as i32;
@@ -199,12 +199,17 @@ pub fn process_grid_2(lines: &Vec<Vec<char>>) -> i32 {
     return res;
 }
 
-pub fn parse_grid(lines: &Vec<String>) -> Vec<Vec<char>> {
-    let mut grid = Vec::<Vec<char>>::new();
+pub fn parse_grid(lines: &Vec<String>) -> Vec<Vec<i32>> {
+    let mut grid = Vec::<Vec<i32>>::new();
     for line in lines {
-        let mut row = Vec::<char>::new();
+        let mut row = Vec::<i32>::new();
         for c in line.chars() {
-            row.push(c);
+            match c {
+                '.' => row.push(0),
+                '#' => row.push(16),
+                '^' => row.push(1),
+                _ => panic!("Invalid character: {}", c),
+            }
         }
         grid.push(row);
     }
