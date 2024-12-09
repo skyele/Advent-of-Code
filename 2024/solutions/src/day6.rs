@@ -150,7 +150,7 @@ pub fn process_grid_1(grid: &Vec<Vec<char>>) -> usize {
     let mut places = HashSet::<(i32, i32)>::new();
     let curr_state = &mut start_state;
     while curr_state.is_valid(&grid) {
-        if (!curr_state.is_guarded(&grid, -1, -1)) {
+        if !curr_state.is_guarded(&grid, -1, -1) {
             places.insert(curr_state.get_position());
         }
         curr_state.move_next(grid, -1, -1);
@@ -166,14 +166,14 @@ pub fn process_grid_with_new_obstacle(
 ) -> bool {
     let mut states = HashSet::<State>::new();
     let mut curr_state = start_state.clone();
-    let xsize = lines.len() as i32;
-    let ysize = lines[0].len() as i32;
 
     while curr_state.is_valid(&lines) {
         if states.contains(&curr_state) {
             return true;
         }
-        states.insert(curr_state.clone());
+        if !curr_state.is_guarded(&lines, x, y) {
+            states.insert(curr_state.clone());
+        }
         curr_state.move_next(lines, x, y);
     }
     return false;
