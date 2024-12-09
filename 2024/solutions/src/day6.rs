@@ -145,17 +145,27 @@ pub fn find_start_place(lines: &Vec<Vec<i32>>) -> State {
     panic!("No start place found");
 }
 
-pub fn process_grid_1(grid: &Vec<Vec<i32>>) -> usize {
+pub fn get(x: i32, y: i32, lines: &Vec<Vec<i32>>) -> i32 {
+    if !is_valid(x, y, lines) {
+        return 0;
+    }
+    return lines[x as usize][y as usize];
+}
+
+pub fn process_grid_1(grid: &mut Vec<Vec<i32>>) -> usize {
     let mut start_state: State = find_start_place(&grid);
-    let mut places = HashSet::<(i32, i32)>::new();
     let curr_state = &mut start_state;
+    let mut res = 0;
     while curr_state.is_valid(&grid) {
         if !curr_state.is_guarded(&grid, -1, -1) {
-            places.insert(curr_state.get_position());
+            if get(curr_state.x, curr_state.y, grid) != 2 {
+                res += 1;
+            }
+            grid[curr_state.x as usize][curr_state.y as usize] = 2;
         }
         curr_state.move_next(grid, -1, -1);
     }
-    return places.len();
+    return res;
 }
 
 pub fn process_grid_with_new_obstacle(
@@ -218,8 +228,8 @@ pub fn parse_grid(lines: &Vec<String>) -> Vec<Vec<i32>> {
 
 pub fn solve_1() -> i32 {
     let lines = read_lines("inputs/day6.txt").unwrap();
-    let grid = parse_grid(&lines);
-    let res = process_grid_1(&grid);
+    let mut grid = parse_grid(&lines);
+    let res = process_grid_1(&mut grid);
     println!("res={}", res);
     return res as i32;
 }
