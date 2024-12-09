@@ -189,10 +189,10 @@ pub fn process_grid_with_new_obstacle(
     return false;
 }
 
-pub fn process_grid_2(lines: &Vec<Vec<i32>>) -> i32 {
-    let mut start_state: State = find_start_place(&lines);
-    let xsize = lines.len() as i32;
-    let ysize = lines[0].len() as i32;
+pub fn process_grid_2(grid: &mut Vec<Vec<i32>>) -> i32 {
+    let mut start_state: State = find_start_place(&grid);
+    let xsize = grid.len() as i32;
+    let ysize = grid[0].len() as i32;
     let mut res: i32 = 0;
 
     for i in 0..xsize {
@@ -201,7 +201,11 @@ pub fn process_grid_2(lines: &Vec<Vec<i32>>) -> i32 {
                 continue;
             }
 
-            let is_loop = process_grid_with_new_obstacle(&start_state, &lines, i, j);
+            if grid[i as usize][j as usize] == 16 {
+                continue;
+            }
+
+            let is_loop = process_grid_with_new_obstacle(&start_state, &grid, i, j);
             res += is_loop as i32;
         }
     }
@@ -236,8 +240,8 @@ pub fn solve_1() -> i32 {
 
 pub fn solve_2() -> i32 {
     let lines = read_lines("inputs/day6.txt").unwrap();
-    let grid = parse_grid(&lines);
-    let res = process_grid_2(&grid);
+    let mut grid = parse_grid(&lines);
+    let res = process_grid_2(&mut grid);
     println!("res={}", res);
     return res as i32;
 }
