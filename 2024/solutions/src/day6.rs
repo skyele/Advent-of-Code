@@ -183,7 +183,6 @@ pub fn process_grid_with_new_obstacle(
     x: i32,
     y: i32,
 ) -> bool {
-    let mut states = HashSet::<State>::new();
     let mut curr_state = start_state.clone();
     let mut local_grid = grid.clone();
 
@@ -255,7 +254,6 @@ pub fn solve_1() -> i32 {
 
 pub fn solve_2() -> i32 {
     let lines = read_lines("inputs/day6.txt").unwrap();
-    // let lines = read_lines("inputs/day6-1.txt").unwrap();
     let mut grid = parse_grid(&lines);
     let res = process_grid_2(&mut grid);
     println!("res={}", res);
