@@ -87,11 +87,12 @@ impl State {
         }
     }
 
-    fn is_guarded(&self, lines: &Vec<Vec<char>>) -> bool {
+    fn is_guarded(&self, lines: &Vec<Vec<char>>, extra_x: i32, extra_y: i32) -> bool {
         if !is_valid(self.x, self.y, lines) {
             return false;
         }
-        return lines[self.x as usize][self.y as usize] == '#';
+        return lines[self.x as usize][self.y as usize] == '#'
+            || (self.x == extra_x && self.y == extra_y);
     }
 
     fn turn_right(&mut self) {
@@ -113,7 +114,7 @@ impl State {
 
     fn move_next(&mut self, lines: &Vec<Vec<char>>, extra_x: i32, extra_y: i32) {
         self.move_forward();
-        if !self.is_guarded(lines) && !(self.x == extra_x && self.y == extra_y) {
+        if !self.is_guarded(lines, extra_x, extra_y) {
             return;
         }
 
@@ -121,7 +122,7 @@ impl State {
         self.turn_right();
         self.move_forward();
 
-        if !self.is_guarded(lines) && !(self.x == extra_x && self.y == extra_y) {
+        if !self.is_guarded(lines, extra_x, extra_y) {
             return;
         }
         self.move_backward();
@@ -156,7 +157,9 @@ pub fn process_grid_1(grid: &Vec<Vec<char>>) -> usize {
     let mut places = HashSet::<(i32, i32)>::new();
     let curr_state = &mut start_state;
     while curr_state.is_valid(&grid) {
-        places.insert(curr_state.get_position());
+        if(!curr_state.is_guarded(&grid, -1, -1)) {
+            places.insert(curr_state.get_position());
+        }
         curr_state.move_next(grid, -1, -1);
     }
     return places.len();
