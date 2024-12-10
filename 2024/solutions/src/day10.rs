@@ -63,7 +63,9 @@ pub fn search(
         return;
     }
 
-    grid[x][y] = VISITED - grid[x][y];
+    if mode == &Mode::Mode1 {
+        grid[x][y] = VISITED - grid[x][y];
+    }
 
     for (dx, dy) in DIRECTIONS.iter() {
         let (new_x, new_y) = (x as i32 + dx, y as i32 + dy);
@@ -76,10 +78,6 @@ pub fn search(
             result_grid,
             mode,
         );
-    }
-
-    if mode == &Mode::Mode2 {
-        grid[x][y] = VISITED - grid[x][y];
     }
 }
 
