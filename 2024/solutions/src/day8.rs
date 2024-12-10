@@ -1,6 +1,12 @@
 use crate::common::file_helper::read_lines;
 use std::collections::HashMap;
 
+#[derive(Debug, Clone, Eq, Hash, PartialEq)]
+enum Mode {
+    Mode1,
+    Mode2,
+}
+
 pub fn parse_map(lines: &Vec<String>) -> HashMap<char, Vec<(i32, i32)>> {
     let mut map: HashMap<char, Vec<(i32, i32)>> = HashMap::new();
     for (i, line) in lines.iter().enumerate() {
@@ -35,17 +41,20 @@ pub fn set_antenna(
     ysize: usize,
     map: &HashMap<char, Vec<(i32, i32)>>,
     grid: &mut Vec<Vec<i32>>,
+    mode: Mode,
 ) {
     for (k, vec) in map.iter() {
-        let vsize = vec.len() as i32;
+        let vsize = vec.len();
         for i in 0..vsize {
             for j in i + 1..vsize {
-                let (x1, y1) = vec[i as usize];
-                let (x2, y2) = vec[j as usize];
+                let (x1, y1) = vec[i];
+                let (x2, y2) = vec[j];
                 let (x_diff, y_diff) = (x1 - x2, y1 - y2);
 
-                set_grid(grid, (x1 + x_diff, y1 + y_diff));
-                set_grid(grid, (x2 - x_diff, y2 - y_diff));
+                if mode == Mode::Mode1 {
+                    set_grid(grid, (x1 + x_diff, y1 + y_diff));
+                    set_grid(grid, (x2 - x_diff, y2 - y_diff));
+                }
             }
         }
     }
