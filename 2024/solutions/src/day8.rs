@@ -47,13 +47,24 @@ pub fn set_antenna(
         let vsize = vec.len();
         for i in 0..vsize {
             for j in i + 1..vsize {
-                let (x1, y1) = vec[i];
-                let (x2, y2) = vec[j];
+                let (mut x1, mut y1) = vec[i];
+                let (mut x2, mut y2) = vec[j];
                 let (x_diff, y_diff) = (x1 - x2, y1 - y2);
 
                 if mode == Mode::Mode1 {
                     set_grid(grid, (x1 + x_diff, y1 + y_diff));
                     set_grid(grid, (x2 - x_diff, y2 - y_diff));
+                } else {
+                    set_grid(grid, (x1, y1));
+                    set_grid(grid, (x2, y2));
+                    while set_grid(grid, (x1 + x_diff, y1 + y_diff)) {
+                        x1 += x_diff;
+                        y1 += y_diff;
+                    }
+                    while set_grid(grid, (x2 - x_diff, y2 - y_diff)) {
+                        x2 -= x_diff;
+                        y2 -= y_diff;
+                    }
                 }
             }
         }
@@ -63,10 +74,22 @@ pub fn set_antenna(
 pub fn solve_1() -> i32 {
     let lines = read_lines("inputs/day8.txt").unwrap();
     let map = parse_map(&lines);
-    let xsize = lines.len() as i32;
-    let ysize = lines[0].len() as i32;
-    let mut grid: Vec<Vec<i32>> = vec![vec![0; ysize as usize]; xsize as usize];
-    set_antenna(xsize as usize, ysize as usize, &map, &mut grid);
+    let xsize = lines.len();
+    let ysize = lines[0].len();
+    let mut grid: Vec<Vec<i32>> = vec![vec![0; ysize]; xsize];
+    set_antenna(xsize, ysize, &map, &mut grid, Mode::Mode1);
+    let res = count_grid(&mut grid);
+    println!("res={}", res);
+    return res;
+}
+
+pub fn solve_2() -> i32 {
+    let lines = read_lines("inputs/day8.txt").unwrap();
+    let map = parse_map(&lines);
+    let xsize = lines.len();
+    let ysize = lines[0].len();
+    let mut grid: Vec<Vec<i32>> = vec![vec![0; ysize]; xsize];
+    set_antenna(xsize, ysize, &map, &mut grid, Mode::Mode2);
     let res = count_grid(&mut grid);
     println!("res={}", res);
     return res;
