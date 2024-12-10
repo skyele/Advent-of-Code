@@ -6,13 +6,10 @@ const VISITED: i32 = 9999;
 const THRESHOLD: i32 = 9900;
 const DIRECTIONS: [(i32, i32); 4] = [(0, 1), (0, -1), (1, 0), (-1, 0)];
 
-pub fn print_grid(grid: &Vec<Vec<i32>>) {
-    for i in 0..grid.len() {
-        for j in 0..grid[0].len() {
-            print!("{} ", grid[i][j]);
-        }
-        println!();
-    }
+#[derive(Debug, Clone, Eq, Hash, PartialEq)]
+enum Mode {
+    Mode1,
+    Mode2,
 }
 
 pub fn parse_grid(lines: &Vec<String>) -> Vec<Vec<i32>> {
@@ -50,13 +47,19 @@ pub fn search(
     start_pos: (usize, usize),
     grid: &mut Vec<Vec<i32>>,
     result_grid: &mut Vec<Vec<HashSet<(usize, usize)>>>,
+    mode: &Mode,
 ) {
     if !is_valid_pos(x, y, grid) || grid[x][y] > THRESHOLD || grid[x][y] != expect {
         return;
     }
 
     if expect == 9 && grid[x][y] == expect {
-        result_grid[x][y].insert(start_pos);
+        if mode == &Mode::Mode1 {
+            result_grid[x][y].insert(start_pos);
+        } else {
+            let len = result_grid[x][y].len();
+            result_grid[x][y].insert((len, start_pos.0));
+        }
         return;
     }
 
@@ -71,7 +74,12 @@ pub fn search(
             start_pos,
             grid,
             result_grid,
+            mode,
         );
+    }
+
+    if mode == &Mode::Mode2 {
+        grid[x][y] = VISITED - grid[x][y];
     }
 }
 
@@ -85,12 +93,15 @@ pub fn score_grid(result_grid: &mut Vec<Vec<HashSet<(usize, usize)>>>) -> i64 {
 pub fn score_trailheads(
     grid: &mut Vec<Vec<i32>>,
     result_grid: &mut Vec<Vec<HashSet<(usize, usize)>>>,
+    mode: &Mode,
 ) -> i64 {
     for i in 0..grid.len() {
         for j in 0..grid[0].len() {
             if grid[i][j] == 0 {
-                search(i, j, 0, (i, j), grid, result_grid);
-                restore_grid(grid);
+                search(i, j, 0, (i, j), grid, result_grid, mode);
+                if mode == &Mode::Mode1 {
+                    restore_grid(grid);
+                }
             }
         }
     }
@@ -102,7 +113,16 @@ pub fn solve_1() -> i64 {
     let lines = read_lines("inputs/day10.txt").unwrap();
     let mut grid = parse_grid(&lines);
     let mut result_grid = parse_result_grid(&lines);
-    let res = score_trailheads(&mut grid, &mut result_grid) as i64;
+    let res = score_trailheads(&mut grid, &mut result_grid, &Mode::Mode1) as i64;
+    println!("res={}", res);
+    return res;
+}
+
+pub fn solve_2() -> i64 {
+    let lines = read_lines("inputs/day10.txt").unwrap();
+    let mut grid = parse_grid(&lines);
+    let mut result_grid = parse_result_grid(&lines);
+    let res = score_trailheads(&mut grid, &mut result_grid, &Mode::Mode2) as i64;
     println!("res={}", res);
     return res;
 }

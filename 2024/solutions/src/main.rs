@@ -8,6 +8,7 @@ mod day6;
 mod day7;
 mod day8;
 mod day9;
+mod day10;
 
 fn check<T: std::cmp::PartialEq + std::fmt::Debug + std::fmt::Display>(res: T, expected: T) {
     assert_eq!(
@@ -36,4 +37,6 @@ fn main() {
     check(day8::solve_2(), 1077);
     check(day9::solve_1(), 6346871685398);
     check(day9::solve_2(), 6373055193464);
+    check(day10::solve_1(), 468);
+    check(day10::solve_2(), 966);
 }
