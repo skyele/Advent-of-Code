@@ -29,4 +29,5 @@ fn main() {
     check(day6::solve_1(), 5516);
     check(day6::solve_2(), 2008);
     check(day7::solve_1(), 1430271835320);
+    check(day7::solve_2(), 456565678667482);
 }
