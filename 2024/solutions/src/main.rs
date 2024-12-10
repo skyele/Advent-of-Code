@@ -5,8 +5,9 @@ mod day3;
 mod day4;
 mod day5;
 mod day6;
+mod day7;
 
-fn check(res: i32, expected: i32) {
+fn check<T: std::cmp::PartialEq + std::fmt::Debug + std::fmt::Display>(res: T, expected: T) {
     assert_eq!(
         res, expected,
         "Test failed with value: {:?} != {}",
@@ -27,4 +28,5 @@ fn main() {
     check(day5::solve_2(), 4145);
     check(day6::solve_1(), 5516);
     check(day6::solve_2(), 2008);
+    check(day7::solve_1(), 1430271835320);
 }
