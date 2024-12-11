@@ -74,14 +74,18 @@ pub fn score_num_cnt(num_cnt: &HashMap<i64, i64>) -> i64 {
     return num_cnt.into_iter().fold(0, |acc, (_, cnt)| acc + cnt);
 }
 
+pub fn blinks(num_cnt: &mut HashMap<i64, i64>, num_cache: &mut HashMap<i64, Vec<i64>>, n: i32) {
+    for _ in 0..n {
+        blink(num_cnt, num_cache);
+    }
+}
+
 pub fn solve_1() -> i64 {
     let lines = read_lines("inputs/day11.txt").unwrap();
     let mut num_cnt: HashMap<i64, i64> = parse_stones(&lines[0]);
     let mut num_cache: HashMap<i64, Vec<i64>> = HashMap::new();
 
-    for i in 0..25 {
-        blink(&mut num_cnt, &mut num_cache);
-    }
+    blinks(&mut num_cnt, &mut num_cache, 25);
 
     let res = score_num_cnt(&num_cnt);
     println!("res={}", res);
@@ -93,9 +97,7 @@ pub fn solve_2() -> i64 {
     let mut num_cnt: HashMap<i64, i64> = parse_stones(&lines[0]);
     let mut num_cache: HashMap<i64, Vec<i64>> = HashMap::new();
 
-    for i in 0..75 {
-        blink(&mut num_cnt, &mut num_cache);
-    }
+    blinks(&mut num_cnt, &mut num_cache, 75);
 
     let res = score_num_cnt(&num_cnt);
     println!("res={}", res);
