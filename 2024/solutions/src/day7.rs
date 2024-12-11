@@ -1,4 +1,5 @@
 use crate::common::file_helper::read_lines;
+use crate::common::math_helper;
 
 #[derive(Debug, Clone, Eq, Hash, PartialEq)]
 enum Mode {
@@ -20,7 +21,7 @@ pub fn check(v: &Vec<i64>, idx: usize, target: i64, curr: i64, mode: &Mode) -> b
     let mut res =
         check(v, idx + 1, target, mul, mode) || check(v, idx + 1, target, curr + v[idx], mode);
     if *mode == Mode::Op3 {
-        let num_digits = (ele as f64).log(10.0).floor() as i64 + 1;
+        let num_digits = math_helper::get_num_digits(ele);
         res = res
             || check(
                 v,
