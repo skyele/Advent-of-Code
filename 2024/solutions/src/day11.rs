@@ -15,8 +15,7 @@ pub fn process_new_num(
         let num_digits = math_helper::get_num_digits(num);
         if num_digits % 2 == 0 {
             let mask = 10i64.pow((num_digits / 2) as u32);
-            num1 = Some(num / mask);
-            num2 = Some(num % mask);
+            (num1, num2) = (Some(num / mask), Some(num % mask));
         } else {
             num1 = Some(num.checked_mul(2024).unwrap());
         }
