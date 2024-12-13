@@ -15,7 +15,7 @@ pub fn update_perimeter(
     x: usize,
     y: usize,
     perimeter: &mut i64,
-    graph: &mut Vec<Vec<char>>,
+    graph: &Vec<Vec<char>>,
     target: char,
 ) {
     *perimeter += 4 - DIRECTIONS.iter().fold(0, |acc, (dx, dy)| {
@@ -27,7 +27,7 @@ pub fn update_sides(
     x: usize,
     y: usize,
     sides: &mut BTreeSet<(i32, i32, i32, i32, i32)>,
-    graph: &mut Vec<Vec<char>>,
+    graph: &Vec<Vec<char>>,
     target: char,
 ) {
     for (dx, dy) in DIRECTIONS.iter() {
@@ -40,14 +40,14 @@ pub fn update_sides(
 pub fn dfs<T, F>(
     x: usize,
     y: usize,
-    graph: &mut Vec<Vec<char>>,
+    graph: &Vec<Vec<char>>,
     visited: &mut Vec<Vec<bool>>,
     area: &mut i64,
     state: &mut T,
     target: char,
     update_closure: &F,
 ) where
-    F: Fn(usize, usize, &mut T, &mut Vec<Vec<char>>, char),
+    F: Fn(usize, usize, &mut T, &Vec<Vec<char>>, char),
 {
     if !is_valid(x as i32, y as i32, graph) || visited[x][y] || graph[x][y] != target {
         return;
@@ -112,7 +112,7 @@ pub fn solve_1() -> i64 {
                 dfs::<_, _>(
                     i,
                     j,
-                    &mut graph.clone(),
+                    &graph,
                     &mut visited,
                     &mut area,
                     &mut perimeter,
@@ -141,7 +141,7 @@ pub fn solve_2() -> i64 {
                 dfs::<_, _>(
                     i,
                     j,
-                    &mut graph.clone(),
+                    &graph,
                     &mut visited,
                     &mut area,
                     &mut sides,
