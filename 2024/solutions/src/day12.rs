@@ -119,6 +119,7 @@ pub fn solve_1() -> i64 {
                     graph[i][j],
                     &update_perimeter,
                 );
+
                 res += area * perimeter;
             }
         }
