@@ -11,8 +11,14 @@ pub fn is_same(x: i32, y: i32, graph: &Vec<Vec<char>>, target: char) -> bool {
     return is_valid(x, y, graph) && graph[x as usize][y as usize] == target;
 }
 
-pub fn cal_perimeter(x: usize, y: usize, graph: &mut Vec<Vec<char>>, target: char) -> i64 {
-    return 4 - DIRECTIONS.iter().fold(0, |acc, (dx, dy)| {
+pub fn update_perimeter(
+    x: usize,
+    y: usize,
+    perimeter: &mut i64,
+    graph: &mut Vec<Vec<char>>,
+    target: char,
+) {
+    *perimeter += 4 - DIRECTIONS.iter().fold(0, |acc, (dx, dy)| {
         is_same(x as i32 + dx, y as i32 + dy, graph, target) as i64 + acc
     });
 }
@@ -20,8 +26,8 @@ pub fn cal_perimeter(x: usize, y: usize, graph: &mut Vec<Vec<char>>, target: cha
 pub fn update_sides(
     x: usize,
     y: usize,
-    graph: &mut Vec<Vec<char>>,
     sides: &mut BTreeSet<(i32, i32, i32, i32, i32)>,
+    graph: &mut Vec<Vec<char>>,
     target: char,
 ) {
     for (dx, dy) in DIRECTIONS.iter() {
@@ -31,15 +37,18 @@ pub fn update_sides(
     }
 }
 
-pub fn dfs(
+pub fn dfs<T, F>(
     x: usize,
     y: usize,
     graph: &mut Vec<Vec<char>>,
     visited: &mut Vec<Vec<bool>>,
     area: &mut i64,
-    perimeter: &mut i64,
+    state: &mut T,
     target: char,
-) {
+    update_closure: &F,
+) where
+    F: Fn(usize, usize, &mut T, &mut Vec<Vec<char>>, char),
+{
     if !is_valid(x as i32, y as i32, graph) || visited[x][y] || graph[x][y] != target {
         return;
     }
@@ -47,7 +56,7 @@ pub fn dfs(
     visited[x][y] = true;
 
     *area += 1;
-    *perimeter += cal_perimeter(x, y, graph, target);
+    update_closure(x, y, state, graph, target);
 
     for (dx, dy) in DIRECTIONS.iter() {
         dfs(
@@ -56,39 +65,9 @@ pub fn dfs(
             graph,
             visited,
             area,
-            perimeter,
+            state,
             target,
-        );
-    }
-}
-
-pub fn dfs_sides(
-    x: usize,
-    y: usize,
-    graph: &mut Vec<Vec<char>>,
-    visited: &mut Vec<Vec<bool>>,
-    area: &mut i64,
-    sides: &mut BTreeSet<(i32, i32, i32, i32, i32)>,
-    target: char,
-) {
-    if !is_valid(x as i32, y as i32, graph) || visited[x][y] || graph[x][y] != target {
-        return;
-    }
-
-    visited[x][y] = true;
-
-    *area += 1;
-    update_sides(x, y, graph, sides, target);
-
-    for (dx, dy) in DIRECTIONS.iter() {
-        dfs_sides(
-            (x as i32 + dx) as usize,
-            (y as i32 + dy) as usize,
-            graph,
-            visited,
-            area,
-            sides,
-            target,
+            update_closure,
         );
     }
 }
@@ -130,7 +109,7 @@ pub fn solve_1() -> i64 {
             if !visited[i][j] {
                 let mut area = 0;
                 let mut perimeter = 0;
-                dfs(
+                dfs::<_, _>(
                     i,
                     j,
                     &mut graph.clone(),
@@ -138,6 +117,7 @@ pub fn solve_1() -> i64 {
                     &mut area,
                     &mut perimeter,
                     graph[i][j],
+                    &update_perimeter,
                 );
                 res += area * perimeter;
             }
@@ -157,7 +137,7 @@ pub fn solve_2() -> i64 {
             if !visited[i][j] {
                 let mut area = 0;
                 let mut sides = BTreeSet::<(i32, i32, i32, i32, i32)>::new();
-                dfs_sides(
+                dfs::<_, _>(
                     i,
                     j,
                     &mut graph.clone(),
@@ -165,6 +145,7 @@ pub fn solve_2() -> i64 {
                     &mut area,
                     &mut sides,
                     graph[i][j],
+                    &update_sides,
                 );
 
                 res += area * cal_sides(&mut sides);
