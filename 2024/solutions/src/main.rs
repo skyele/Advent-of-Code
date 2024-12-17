@@ -4,6 +4,7 @@ mod day10;
 mod day11;
 mod day12;
 mod day13;
+mod day14;
 mod day2;
 mod day3;
 mod day4;
@@ -48,4 +49,6 @@ fn main() {
     check(day12::solve_2(), 937032);
     check(day13::solve_1(), 37901);
     check(day13::solve_2(), 77407675412647);
+    check(day14::solve_1(), 230172768);
+    check(day14::solve_2(), 8087);
 }
