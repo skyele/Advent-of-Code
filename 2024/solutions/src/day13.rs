@@ -1,5 +1,6 @@
 use crate::common::file_helper::read_lines;
 
+#[derive(Debug, PartialEq)]
 enum Mode {
     Mode1,
     Mode2,
@@ -7,15 +8,15 @@ enum Mode {
 
 #[derive(Debug)]
 struct EquationParam {
-    a: i32,
-    b: i32,
-    c: i32,
-    d: i32,
-    target_x: i32,
-    target_y: i32,
+    a: i64,
+    b: i64,
+    c: i64,
+    d: i64,
+    target_x: i64,
+    target_y: i64,
 }
 
-pub fn parse_button(line: &str) -> (i32, i32) {
+pub fn parse_button(line: &str) -> (i64, i64) {
     let substr = line
         .split(":")
         .nth(1)
@@ -27,8 +28,8 @@ pub fn parse_button(line: &str) -> (i32, i32) {
         .to_string();
     let nums = substr
         .split(" ")
-        .map(|x| x.parse::<i32>().unwrap())
-        .collect::<Vec<i32>>();
+        .map(|x| x.parse::<i64>().unwrap())
+        .collect::<Vec<i64>>();
     return (nums[0], nums[1]);
 }
 
@@ -72,7 +73,7 @@ pub fn parse_equations(lines: Vec<String>, mode: Mode) -> Vec<EquationParam> {
     return equations;
 }
 
-pub fn solve_equation(equation: &EquationParam) -> Option<i32> {
+pub fn solve_equation(equation: &EquationParam) -> Option<i64> {
     let (a, b, c, d) = (equation.a, equation.b, equation.c, equation.d);
     let (target_x, target_y) = (equation.target_x, equation.target_y);
     let x = (target_x * d - target_y * c) / (a * d - b * c);
@@ -88,13 +89,19 @@ pub fn solve_1() -> i64 {
         .iter()
         .map(|equation| solve_equation(&equation).unwrap_or(0) as i64)
         .sum();
-    println!("res={}", res);
 
+    println!("res={}", res);
     return res;
 }
 
 pub fn solve_2() -> i64 {
     let lines = read_lines("inputs/day13.txt").unwrap();
-    let equations = parse_equations(lines);
-    return 0;
+    let equations = parse_equations(lines, Mode::Mode2);
+    let res = equations
+        .iter()
+        .map(|equation| solve_equation(&equation).unwrap_or(0) as i64)
+        .sum();
+
+    println!("res={}", res);
+    return res;
 }

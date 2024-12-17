@@ -3,6 +3,7 @@ mod day1;
 mod day10;
 mod day11;
 mod day12;
+mod day13;
 mod day2;
 mod day3;
 mod day4;
@@ -45,4 +46,6 @@ fn main() {
     check(day11::solve_2(), 274229228071551);
     check(day12::solve_1(), 1549354);
     check(day12::solve_2(), 937032);
+    check(day13::solve_1(), 37901);
+    check(day13::solve_2(), 77407675412647);
 }
