@@ -118,7 +118,7 @@ pub fn move_robot(grid: &mut Vec<Vec<char>>, x: i64, y: i64, dx: i64, dy: i64) -
     return (curr_x + dx, curr_y + dy);
 }
 
-pub fn check_or_move_bot(
+pub fn check_or_move_robot(
     grid: &mut Vec<Vec<char>>,
     x: i64,
     y: i64,
@@ -135,11 +135,11 @@ pub fn check_or_move_bot(
     }
 
     let mut movable = match grid[(x + dx) as usize][(y + dy) as usize] {
-        '[' => check_or_move_bot(grid, x + dx, y + 1, dx, dy, check_mode),
-        ']' => check_or_move_bot(grid, x + dx, y - 1, dx, dy, check_mode),
+        '[' => check_or_move_robot(grid, x + dx, y + 1, dx, dy, check_mode),
+        ']' => check_or_move_robot(grid, x + dx, y - 1, dx, dy, check_mode),
         '.' => true,
         _ => false,
-    } && check_or_move_bot(grid, x + dx, y + dy, dx, dy, check_mode); // order matters
+    } && check_or_move_robot(grid, x + dx, y + dy, dx, dy, check_mode); // order matters
 
     if !check_mode {
         // move forward
@@ -151,9 +151,9 @@ pub fn check_or_move_bot(
 }
 
 pub fn move_robot_2(grid: &mut Vec<Vec<char>>, x: i64, y: i64, dx: i64, dy: i64) -> (i64, i64) {
-    check_or_move_bot(grid, x, y, dx, dy, true)
+    check_or_move_robot(grid, x, y, dx, dy, true)
         .then(|| {
-            check_or_move_bot(grid, x, y, dx, dy, false);
+            check_or_move_robot(grid, x, y, dx, dy, false);
             (x + dx, y + dy)
         })
         .unwrap_or((x, y))
