@@ -142,6 +142,7 @@ pub fn check_or_move_bot(
     } && check_or_move_bot(grid, x + dx, y + dy, dx, dy, check_mode); // order matters
 
     if !check_mode {
+        // move forward
         grid[(x + dx) as usize][(y + dy) as usize] = grid[x as usize][y as usize];
         grid[x as usize][y as usize] = '.';
     }
