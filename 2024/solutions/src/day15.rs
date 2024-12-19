@@ -137,7 +137,8 @@ pub fn check_or_move_bot(
     let mut movable = match grid[(x + dx) as usize][(y + dy) as usize] {
         '[' => check_or_move_bot(grid, x + dx, y + 1, dx, dy, check_mode),
         ']' => check_or_move_bot(grid, x + dx, y - 1, dx, dy, check_mode),
-        _ => true, // '.'
+        '.' => true,
+        _ => false,
     } && check_or_move_bot(grid, x + dx, y + dy, dx, dy, check_mode); // order matters
 
     if !check_mode {
