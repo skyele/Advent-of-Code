@@ -5,7 +5,7 @@ use std::collections::{HashMap, HashSet};
 
 const DIRECTIONS: [(i64, i64); 4] = [(-1, 0), (1, 0), (0, -1), (0, 1)];
 
-#[derive(Eq, PartialEq)]
+#[derive(Eq, PartialEq, Debug)]
 enum Direction {
     Up,
     Down,
@@ -97,12 +97,12 @@ pub fn is_valid(grid: &Vec<Vec<char>>, node: (i64, i64)) -> bool {
 pub fn get_direction(from: (i64, i64), to: (i64, i64)) -> Direction {
     let (from_x, from_y) = from;
     let (to_x, to_y) = to;
-    match (from_x - to_x, from_y - to_y) {
-        (0, 1) => return Direction::Up,
-        (0, -1) => return Direction::Down,
-        (1, 0) => return Direction::Left,
-        (1, 1) => return Direction::Special,
-        _ => return Direction::Right,
+    match (to_x - from_x, to_y - from_y) {
+        (0, 1) => return Direction::Right,
+        (0, -1) => return Direction::Left,
+        (1, 0) => return Direction::Down,
+        (-1, 0) => return Direction::Up,
+        _ => return Direction::Special,
     }
 }
 
@@ -111,14 +111,17 @@ pub fn update_score(graph: &mut Graph, node: (i64, i64), score: i64) {
     graph.scores_ranking.push(Reverse((score, node)));
 }
 
-pub fn cal_score(graph: &Graph, score: i64, curr: (i64, i64), next: (i64, i64)) -> i64 {
-    let exist_direction = graph.directions.get(&curr);
+pub fn cal_score(
+    graph: &Graph,
+    score: i64,
+    curr: (i64, i64),
+    next: (i64, i64),
+    exist_direction: &Direction,
+) -> i64 {
     let next_direction = get_direction(curr, next);
     let new_score = score
         + 1
-        + if exist_direction != Some(&next_direction)
-            || exist_direction == Some(&Direction::Special)
-        {
+        + if exist_direction != &next_direction || exist_direction == &Direction::Special {
             1000
         } else {
             0
@@ -143,7 +146,13 @@ pub fn dijkstra(grid: &Vec<Vec<char>>, graph: &mut Graph) {
             }
 
             let exist_score = *graph.scores.get(&next).unwrap_or(&std::i64::MAX);
-            let new_score = cal_score(graph, score, curr, next);
+            let new_score = cal_score(
+                graph,
+                score,
+                curr,
+                next,
+                graph.directions.get(&curr).unwrap(),
+            );
             let next_direction = get_direction(curr, next);
 
             if new_score < exist_score {
@@ -154,13 +163,97 @@ pub fn dijkstra(grid: &Vec<Vec<char>>, graph: &mut Graph) {
     }
 }
 
+pub fn dfs(
+    x: i64,
+    y: i64,
+    grid: &Vec<Vec<char>>,
+    graph: &mut Graph,
+    direction: Direction,
+    score: i64,
+    target: i64,
+    cache: &mut HashMap<(i64, i64, i64), bool>,
+    node_set: &mut HashSet<(i64, i64)>,
+) -> bool {
+    let curr = (x, y);
+    if curr == graph.end && score == target {
+        return true;
+    }
+
+    let cache_key = (x, y, score);
+    if cache.contains_key(&cache_key) {
+        return *cache.get(&cache_key).unwrap();
+    }
+
+    if !is_valid(grid, curr) || graph.visited.contains(&curr) || score > target || curr == graph.end
+    {
+        return false;
+    }
+
+    graph.visited.insert(curr);
+
+    let mut res = false;
+    for d in DIRECTIONS {
+        let next = (curr.0 + d.0, curr.1 + d.1);
+        let new_score = cal_score(graph, score, curr, next, &direction);
+        let next_direction = get_direction(curr, next);
+        res = dfs(
+            next.0,
+            next.1,
+            grid,
+            graph,
+            next_direction,
+            new_score,
+            target,
+            cache,
+            node_set,
+        ) || res; // order matters, || short cut
+    }
+
+    if res {
+        node_set.insert(curr);
+    }
+
+    cache.insert(cache_key, res);
+    graph.visited.remove(&curr);
+    return res;
+}
+
 pub fn solve_1() -> i64 {
     let lines = read_lines("inputs/day16.txt").unwrap();
     let mut grid = parse_grid(&lines, lines.len());
     let mut graph = parse_graph(&grid);
+
     dijkstra(&grid, &mut graph);
 
     let res = *graph.scores.get(&graph.end).unwrap();
+    println!("result: {}", res);
+    return res;
+}
+
+pub fn solve_2() -> i64 {
+    let lines = read_lines("inputs/day16.txt").unwrap();
+    let mut grid = parse_grid(&lines, lines.len());
+    let mut graph = parse_graph(&grid);
+    let mut cache = HashMap::new();
+    let mut node_set = HashSet::new();
+    node_set.insert(graph.end);
+
+    dijkstra(&grid, &mut graph);
+    let target = *graph.scores.get(&graph.end).unwrap();
+    graph.visited.clear();
+    dfs(
+        graph.start.0,
+        graph.start.1,
+        &grid,
+        &mut graph,
+        Direction::Special,
+        0,
+        target,
+        &mut cache,
+        &mut node_set,
+    );
+
+    let res = node_set.len() as i64;
     println!("result: {}", res);
     return res;
 }
